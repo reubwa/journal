@@ -19,8 +19,17 @@ class HeaderViewer extends StatelessWidget {
           } else {
             return const ColoredBox(color: Colors.deepOrange);
           }
-        case BlockTypes.image:
-          return Image.memory(headerBlock!.image);
+        case BlockTypes.image || BlockTypes.doodle:
+          return Expanded(child:Image.memory(headerBlock!.image));
+        case BlockTypes.text:
+          return Expanded(
+            child: ColoredBox(
+              color: Colors.deepOrange,
+              child: SizedBox(
+                child: Text(headerBlock!.txt, style: TextStyle(color: Colors.white))
+              ),
+            ),
+          );
         default:
           return const ColoredBox(color: Colors.deepOrange);
       }

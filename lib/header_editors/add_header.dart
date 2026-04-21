@@ -1,9 +1,15 @@
+import 'dart:ui';
+import 'dart:ui' as ui;
+
 import 'package:drift/drift.dart' hide Column;
 import 'package:flutter/material.dart';
 import 'package:image_picker/image_picker.dart' as ip;
 import 'package:journalapp/helpers/colour_to_image.dart';
+import 'package:journalapp/helpers/text_to_img.dart';
 import 'package:journalapp/pickers/colour_picker.dart';
+import 'package:journalapp/pickers/drawing_area.dart';
 import 'package:journalapp/pickers/image_picker.dart';
+import 'package:journalapp/pickers/ret_text.dart';
 
 import '../database.dart';
 
@@ -58,6 +64,39 @@ class _AddHeaderState extends State<AddHeader> {
       isComp = true;
     });
   }
+  
+  Future handlePickedText(String text) async {
+    final img = await imageToUint8List(await imageFromString(text));
+    await database.into(database.blocks).insert(BlocksCompanion(
+      type: Value(BlockTypes.text),
+      parentEntry: Value(widget.entryId),
+      positionAmongstSiblings: Value(0),
+      isHeader: Value(true),
+      txt: Value(text),
+      image: Value(img)
+    ));
+    
+    setState(() {
+      chosenFile = MemoryImage(img);
+      isComp = true;
+    });
+  }
+  
+  Future handleFinishedDoodle(Image img, String json) async{
+    await database.into(database.blocks).insert(BlocksCompanion(
+      type: Value(BlockTypes.doodle),
+      parentEntry: Value(widget.entryId),
+      positionAmongstSiblings: Value(0),
+      isHeader: Value(true),
+      txt: Value(json),
+      image: Value(await imageToUint8List(img as ui.Image))
+    ));
+
+    setState(() async {
+      chosenFile = MemoryImage(await imageToUint8List(img as ui.Image));
+      isComp = true;
+    });
+  }
 
   @override
   Widget build(BuildContext context) {
@@ -101,6 +140,28 @@ class _AddHeaderState extends State<AddHeader> {
                         Text("Solid Colour")
                       ]
                   )),
+                  FilledButton(onPressed: (){
+                    setState(() {
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>RetText(onTextHanded: handlePickedText)));
+                    });
+                  }, child: Row(
+                    spacing: 8,
+                    children: [
+                      Icon(Icons.text_snippet),
+                      Text("Text")
+                    ]
+                  )),
+                  FilledButton(onPressed: (){
+                    setState(() {
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>DrawingArea(onDoodleFinished: handleFinishedDoodle)));
+                    });
+                  }, child: Row(
+                    spacing: 8,
+                    children: [
+                      Icon(Icons.draw),
+                      Text("Doodle")
+                    ]
+                  ))
                 ],
               ),
             )

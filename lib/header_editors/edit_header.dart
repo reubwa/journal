@@ -108,8 +108,8 @@ class _HeaderEditorState extends State<HeaderEditor> {
                 ),
                 OutlinedButton(onPressed: (){
                   deleteHeader().then((_){
-                    Navigator.pop(context);
                     setState(() {
+                      Navigator.pop(context);
                       Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>AddHeader(entryId: widget.entryId)));
                     });
                   });
