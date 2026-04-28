@@ -178,8 +178,21 @@ class _AddHeaderState extends State<AddHeader> {
     });
   }
 
-  Future handlePickedHealth(HealthDataPoint h){
-    throw UnimplementedError();
+  Future handlePickedHealth(HealthDataPoint h) async {
+    final img = await imageToUint8List(await imageFromString(h.toString()));
+    await database.into(database.blocks).insert(BlocksCompanion(
+        type: Value(BlockTypes.fitnessdata),
+        parentEntry: Value(widget.entryId),
+        positionAmongstSiblings: Value(0),
+        isHeader: Value(true),
+        txt: Value(h.toString()),
+        image: Value(img)
+    ));
+
+    setState(() {
+      chosenFile = MemoryImage(img);
+      isComp = true;
+    });
   }
 
   @override

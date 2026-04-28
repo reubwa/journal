@@ -43,7 +43,22 @@
 					<string>$(PRODUCT_MODULE_NAME).SceneDelegate</string>
 					<key>UISceneStoryboardFile</key>
 					<string>Main</string>
-				</dict>
+				  <key>UIBackgroundModes</key>
+  <array>
+    <string>fetch</string>
+    <string>remote-notification</string>
+  </array>
+
+  <key>NSUserTrackingUsageDescription</key>
+  <string>This identifier will be used to deliver personalized ads to you.</string>
+
+  <key>NSCalendarsUsageDescription</key>
+  <string>We use your calendar for scheduling notifications</string>
+
+  <key>FirebaseAppDelegateProxyEnabled</key>
+  <false/>
+
+</dict>
 			</array>
 		</dict>
 	</dict>
