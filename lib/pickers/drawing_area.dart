@@ -6,6 +6,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_drawing_board/flutter_drawing_board.dart';
 import 'package:flutter_drawing_board/paint_contents.dart';
 
+/*https://pub.dev/packages/flutter_drawing_board*/
+
 class DrawingArea extends StatefulWidget {
   final Future Function(Uint8List, String) onDoodleFinished;
   final String? drawingJSON;

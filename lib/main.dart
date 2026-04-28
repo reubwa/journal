@@ -72,7 +72,7 @@ class _MainBodyState extends State<MainBody> {
     _loadEntries();
     super.initState();
   }
-
+  /*https://pub.dev/packages/scrollable_positioned_list*/
   void jumpToDate(DateTime targetDate) {
     final index = entries.indexWhere((item) => item.date.year == targetDate.year && item.date.month == targetDate.month && item.date.day == targetDate.day);
     if (index != -1) {
@@ -112,6 +112,7 @@ class _MainBodyState extends State<MainBody> {
               }, icon: const Icon(Icons.settings))
             ]
         ),
+        /*https://api.flutter.dev/flutter/material/FloatingActionButton-class.html*/
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               await showModalBottomSheet<void>(context: context, builder: (BuildContext context){return const AddEntryModalSheet();});
@@ -150,6 +151,7 @@ class _MainBodyState extends State<MainBody> {
                       title: Text(item.title),
                       key: Key(index.toString()),
                       leading: Hero(
+                        /*https://api.flutter.dev/flutter/widgets/Hero-class.html*/
                         tag: "entry-hero-${item.id}",
                         child: ClipRRect(
                             borderRadius: BorderRadius.circular(8),

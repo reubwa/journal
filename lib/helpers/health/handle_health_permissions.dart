@@ -1,5 +1,7 @@
 import 'package:permission_handler/permission_handler.dart';
 
+/*https://pub.dev/packages/health*/
+
 Future HandleHealthPermissions() async{
   var activityRecognitionStatus = await Permission.activityRecognition.status;
   var locationStatus = await Permission.location.status;

@@ -2,7 +2,7 @@ import 'dart:ui';
 import 'dart:ui' as ui;
 
 import 'package:flutter/material.dart';
-
+/*https://api.flutter.dev/flutter/dart-ui/PictureRecorder-class.html*/
 Future<ui.Image> imageFromString(String text) async{
   final recorder = PictureRecorder();
   final canvas = Canvas(recorder);

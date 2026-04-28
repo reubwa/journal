@@ -2,7 +2,7 @@ import 'package:flutter_test/flutter_test.dart';
 import 'package:journalapp/helpers/get_map_tile_url.dart';
 import 'package:journalapp/helpers/ll_string_to_float_pair.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
-
+/*https://docs.flutter.dev/cookbook/testing/unit/introduction*/
 void main(){
   group('helpers', () {
     test('map tile URL', () {

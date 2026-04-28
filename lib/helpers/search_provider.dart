@@ -7,6 +7,11 @@ import '../entry_view.dart';
 import '../header_viewer.dart';
 import 'get_header.dart';
 
+/*
+* https://api.flutter.dev/flutter/material/SearchDelegate-class.html
+* https://gist.github.com/huynguyennovem/a07979f011c00b36c554b657802ac59c
+* */
+
 class SearchProvider extends SearchDelegate{
   final database = AppDatabase();
 

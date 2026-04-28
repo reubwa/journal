@@ -1,6 +1,8 @@
 import 'package:flutter/material.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
+/*https://pub.dev/packages/location_picker_flutter_map*/
+
 class LocPicker extends StatefulWidget {
   final Future Function(LatLong) onLocPicked;
   const LocPicker({super.key, required this.onLocPicked});

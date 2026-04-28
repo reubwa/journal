@@ -106,6 +106,14 @@ class _AddHeaderState extends State<AddHeader> {
     });
   }
 
+  /*
+  * Maths used to convert Latitude and Longitude into Slippery Map Tilenames
+  *
+  * https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+  * https://help.openstreetmap.org/questions/2687/coordinates-to-pixels-based-on-zoom/
+  * https://alexwlchan.net/2025/static-maps/
+  * */
+
   Future handleLocationPicked(LatLong ll) async {
     const zoom = 14;
     final url = GetMapTileURL(ll.latitude, ll.longitude, zoom);

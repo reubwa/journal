@@ -6,6 +6,17 @@ import 'dart:ui' as ui;
 import 'package:flutter/material.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
+/*
+* Maths used to convert Latitude and Longitude into Slippery Map Tilenames
+*
+* https://wiki.openstreetmap.org/wiki/Slippy_map_tilenames
+* https://help.openstreetmap.org/questions/2687/coordinates-to-pixels-based-on-zoom/
+* https://alexwlchan.net/2025/static-maps/
+* */
+
+/*https://api.flutter.dev/flutter/dart-ui/PictureRecorder-class.html*/
+/*https://api.flutter.dev/flutter/painting/TextPainter-class.html*/
+
 Future<Uint8List> locToImg(int zoom, LatLong ll, Uint8List bytes) async {
   final n = pow(2, zoom);
   final xExact = n * ((ll.longitude + 180.0) / 360.0);

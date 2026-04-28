@@ -68,6 +68,7 @@ class _EntryViewState extends State<EntryView> {
 
   @override
   Widget build(BuildContext context) {
+    /*https://medium.com/@kumarsuraj19111997/mastering-futurebuilder-in-flutter-a-complete-guide-cac28d5d14bf*/
     return FutureBuilder<Map<String, dynamic>>(
       future: _pageDataFuture,
       builder: (context, snapshot) {
@@ -83,6 +84,7 @@ class _EntryViewState extends State<EntryView> {
               body: CustomScrollView(
                 physics: const BouncingScrollPhysics(),
                 slivers: <Widget>[
+                  /*https://blog.flutter.dev/slivers-demystified-6ff68ab0296f*/
                   SliverAppBar(
                     leading: IconButton(
                         onPressed: () {
@@ -149,6 +151,7 @@ class _EntryViewState extends State<EntryView> {
                         },
                       ),
                       background: Hero(
+                        /*https://api.flutter.dev/flutter/widgets/Hero-class.html*/
                           tag: "entry-hero-${thisEntry.id}",
                           child: HeaderViewer(headerBlock: thisHeader)),
                     ),
@@ -217,6 +220,7 @@ class _EntryViewState extends State<EntryView> {
                   ),
                 ],
               ),
+              /*https://api.flutter.dev/flutter/material/FloatingActionButton-class.html*/
               floatingActionButton: FloatingActionButton(onPressed: (){
                 Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=> AddBlock(entryId: thisEntry.id, entryDate: thisEntry.date))).then((_){
                   setState(() {
@@ -239,7 +243,7 @@ class BlockExpanded extends StatelessWidget {
   });
 
   final Block? item;
-
+  /*https://pub.dev/packages/map_launcher*/
   Future _displayMap() async {
     final LatLong coords = llStringToFloatPair(item!.txt);
     final availableMaps = await MapLauncher.installedMaps;
