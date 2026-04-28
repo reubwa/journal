@@ -80,6 +80,9 @@ class SearchProvider extends SearchDelegate{
                             child: FutureBuilder<Block?>(
                                 future: getHeader(item.id),
                                 builder: (context, snapshot) {
+                                  if (snapshot.connectionState == ConnectionState.waiting) {
+                                    return const ColoredBox(color: Colors.grey);
+                                  }
                                   return HeaderViewer(headerBlock: snapshot.data);
                                 }
                             ),

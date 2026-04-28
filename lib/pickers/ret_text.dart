@@ -2,7 +2,8 @@ import 'package:flutter/material.dart';
 
 class RetText extends StatefulWidget {
   final Future Function(String) onTextHanded;
-  const RetText({super.key, required this.onTextHanded});
+  final String? text;
+  const RetText({super.key, required this.onTextHanded, this.text});
 
   @override
   State<RetText> createState() => _RetTextState();
@@ -11,6 +12,13 @@ class RetText extends StatefulWidget {
 class _RetTextState extends State<RetText> {
   final textController = TextEditingController();
   bool isComp = false;
+  @override
+  void initState() {
+    if(widget.text != null){
+      textController.text = widget.text!;
+    }
+    super.initState();
+  }
   @override
   void dispose() {
     textController.dispose();

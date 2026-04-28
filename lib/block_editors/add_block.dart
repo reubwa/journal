@@ -19,17 +19,18 @@ import 'package:journalapp/pickers/ret_text.dart';
 import 'package:location_picker_flutter_map/location_picker_flutter_map.dart';
 
 import '../database.dart';
+import '../helpers/ll_to_loc.dart';
 
-class AddHeader extends StatefulWidget {
+class AddBlock extends StatefulWidget {
   int entryId = 0;
   DateTime entryDate;
-  AddHeader({super.key, required this.entryId, required this.entryDate});
+  AddBlock({super.key, required this.entryId, required this.entryDate});
 
   @override
-  State<AddHeader> createState() => _AddHeaderState();
+  State<AddBlock> createState() => _AddBlockState();
 }
 
-class _AddHeaderState extends State<AddHeader> {
+class _AddBlockState extends State<AddBlock> {
   bool isComp = false;
   ImageProvider<Object>? chosenFile;
   final database = AppDatabase();
@@ -42,8 +43,8 @@ class _AddHeaderState extends State<AddHeader> {
     await database.into(database.blocks).insert(BlocksCompanion(
         type: Value(BlockTypes.image),
         parentEntry: Value(widget.entryId),
-        positionAmongstSiblings: Value(0),
-        isHeader: Value(true),
+        positionAmongstSiblings: Value(1),
+        isHeader: Value(false),
         txt: Value(""),
         image: Value(bytes)
     ));
@@ -61,8 +62,8 @@ class _AddHeaderState extends State<AddHeader> {
     await database.into(database.blocks).insert(BlocksCompanion(
         type: Value(BlockTypes.colouredblock),
         parentEntry: Value(widget.entryId),
-        positionAmongstSiblings: Value(0),
-        isHeader: Value(true),
+        positionAmongstSiblings: Value(1),
+        isHeader: Value(false),
         txt: Value(picked.toARGB32().toString()),
         image: Value(bytes)
     ));
@@ -78,8 +79,8 @@ class _AddHeaderState extends State<AddHeader> {
     await database.into(database.blocks).insert(BlocksCompanion(
         type: Value(BlockTypes.text),
         parentEntry: Value(widget.entryId),
-        positionAmongstSiblings: Value(0),
-        isHeader: Value(true),
+        positionAmongstSiblings: Value(1),
+        isHeader: Value(false),
         txt: Value(text),
         image: Value(img)
     ));
@@ -94,8 +95,8 @@ class _AddHeaderState extends State<AddHeader> {
     await database.into(database.blocks).insert(BlocksCompanion(
         type: Value(BlockTypes.doodle),
         parentEntry: Value(widget.entryId),
-        positionAmongstSiblings: Value(0),
-        isHeader: Value(true),
+        positionAmongstSiblings: Value(1),
+        isHeader: Value(false),
         txt: Value(json),
         image: Value(imgBytes)
     ));
@@ -123,51 +124,13 @@ class _AddHeaderState extends State<AddHeader> {
     }
 
     // Calculate the exact floating-point pixel coordinates for the location pin on the 256x256 tile
-    final n = pow(2, zoom);
-    final xExact = n * ((ll.longitude + 180.0) / 360.0);
-    final latRad = ll.latitude * pi / 180.0;
-    final yExact = n * (1.0 - (log(tan(latRad) + 1.0 / cos(latRad)) / pi)) / 2.0;
-
-    final pixelX = ((xExact - xExact.floor()) * 256.0);
-    final pixelY = ((yExact - yExact.floor()) * 256.0);
-
-    // Decode the tile image
-    final codec = await ui.instantiateImageCodec(bytes);
-    final frame = await codec.getNextFrame();
-    final uiImage = frame.image;
-
-    // Set up a canvas to draw the map tile and the pin
-    final recorder = ui.PictureRecorder();
-    final canvas = ui.Canvas(recorder);
-
-    canvas.drawImage(uiImage, ui.Offset.zero, ui.Paint());
-
-    // Draw the location pin icon directly onto the map
-    final iconPainter = TextPainter(textDirection: TextDirection.ltr);
-    iconPainter.text = TextSpan(
-      text: String.fromCharCode(Icons.location_on.codePoint),
-      style: TextStyle(
-        fontSize: 36.0,
-        fontFamily: Icons.location_on.fontFamily,
-        package: Icons.location_on.fontPackage,
-        color: Colors.red,
-      ),
-    );
-    iconPainter.layout();
-
-    // Offset the pin so the bottom tip points directly at the precise location
-    iconPainter.paint(canvas, ui.Offset(pixelX - 18.0, pixelY - 36.0));
-
-    final drawnPicture = recorder.endRecording();
-    final finalImage = await drawnPicture.toImage(256, 256);
-    final byteData = await finalImage.toByteData(format: ui.ImageByteFormat.png);
-    final finalBytes = byteData!.buffer.asUint8List();
+    Uint8List finalBytes = await locToImg(zoom, ll, bytes);
 
     await database.into(database.blocks).insert(BlocksCompanion(
         type: Value(BlockTypes.location),
         parentEntry: Value(widget.entryId),
-        positionAmongstSiblings: Value(0),
-        isHeader: Value(true),
+        positionAmongstSiblings: Value(1),
+        isHeader: Value(false),
         txt: Value(ll.toString()),
         image: Value(finalBytes)
     ));
@@ -178,15 +141,28 @@ class _AddHeaderState extends State<AddHeader> {
     });
   }
 
-  Future handlePickedHealth(HealthDataPoint h){
-    throw UnimplementedError();
+
+  Future handlePickedHealth(HealthDataPoint h) async{
+    final img = await imageToUint8List(await imageFromString(h.toString()));
+    await database.into(database.blocks).insert(BlocksCompanion(
+        type: Value(BlockTypes.location),
+        parentEntry: Value(widget.entryId),
+        positionAmongstSiblings: Value(1),
+        isHeader: Value(false),
+        txt: Value(h.toString()),
+        image: Value(img)
+    ));
+    setState(() {
+      chosenFile = MemoryImage(img);
+      isComp = true;
+    });
   }
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
       appBar: AppBar(
-          title: const Text("Add a Header"),
+          title: const Text("Add a Block"),
           leading: IconButton(onPressed: (){Navigator.pop(context);}, icon: const Icon(Icons.close)),
           actions: [
             IconButton(onPressed: isComp ? (){

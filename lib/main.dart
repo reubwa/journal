@@ -3,6 +3,7 @@ import 'package:intl/intl.dart';
 import 'package:journalapp/database.dart';
 import 'package:journalapp/entry_view.dart';
 import 'package:journalapp/header_viewer.dart';
+import 'package:scrollable_positioned_list/scrollable_positioned_list.dart';
 
 import 'helpers/get_header.dart';
 import 'helpers/search_provider.dart';
@@ -52,11 +53,18 @@ class _MainBodyState extends State<MainBody> {
 
   final database = AppDatabase();
   List<Entry> entries = [];
-
+  final ItemScrollController _itemScrollController = ItemScrollController();
   @override
   void initState() {
     _loadEntries();
     super.initState();
+  }
+  void jumpToDate(DateTime targetDate) {
+    final index = entries.indexWhere((item) => item.date.year == targetDate.year && item.date.month == targetDate.month && item.date.day == targetDate.day);
+    if (index != -1) {
+      // Jump to the found index
+      _itemScrollController.jumpTo(index: index);
+    }
   }
 
   @override
@@ -67,24 +75,30 @@ class _MainBodyState extends State<MainBody> {
             leading: IconButton(
                 onPressed: () async {
                   await showSearch(context: context, delegate: SearchProvider());
+                  if (!context.mounted) return;
                   _loadEntries();
                 },
                 icon: const Icon(Icons.search)
             ),
             actions: [
-              IconButton(onPressed: (){}, icon: const Icon(Icons.calendar_month)),
-              IconButton(onPressed: (){}, icon: const Icon(Icons.filter_alt))
+              IconButton(onPressed: ()=>{
+                showDatePicker(context: context, firstDate: DateTime(1900), lastDate: DateTime.now()).then((res)=>{
+                  jumpToDate(res!)
+                })
+              }, icon: const Icon(Icons.calendar_month))
             ]
         ),
         floatingActionButton: FloatingActionButton.extended(
             onPressed: () async {
               await showModalBottomSheet<void>(context: context, builder: (BuildContext context){return const AddEntryModalSheet();});
+              if (!context.mounted) return;
               _loadEntries();
             },
             label: const Text("New Entry"),
             icon: const Icon(Icons.add)
         ),
-        body: ListView.builder(
+        body: ScrollablePositionedList.builder(
+            itemScrollController: _itemScrollController,
             itemCount: entries.length,
             padding: const EdgeInsets.only(top: 8, bottom: 8),
             itemBuilder: (context, index){
@@ -103,6 +117,7 @@ class _MainBodyState extends State<MainBody> {
               Widget entryTile = ListTile(
                 onTap: () async {
                   await Navigator.push(context, MaterialPageRoute(builder: (context)=>EntryView(entryIndex: item.id)));
+                  if (!context.mounted) return;
                   _loadEntries();
                 },
                 title: Text(item.title),
@@ -116,6 +131,9 @@ class _MainBodyState extends State<MainBody> {
                         child: FutureBuilder<Block?>(
                             future: getHeader(item.id),
                             builder: (context, snapshot) {
+                              if (snapshot.connectionState == ConnectionState.waiting) {
+                                return const ColoredBox(color: Colors.grey);
+                              }
                               return HeaderViewer(headerBlock: snapshot.data);
                             }
                         ),
@@ -151,6 +169,3 @@ class _MainBodyState extends State<MainBody> {
     );
   }
 }
-
-
-

@@ -6,7 +6,8 @@ import 'package:journalapp/helpers/get_header.dart';
 
 class EditHeader extends StatefulWidget {
   int entryId = 0;
-  EditHeader({super.key, required this.entryId});
+  DateTime entryDate;
+  EditHeader({super.key, required this.entryId, required this.entryDate});
 
   @override
   State<EditHeader> createState() => _EditHeaderState();
@@ -49,13 +50,14 @@ class _EditHeaderState extends State<EditHeader> {
       );
     }
 
-    return hasHeaderBlock ? HeaderEditor(entryId: widget.entryId) : AddHeader(entryId: widget.entryId);
+    return hasHeaderBlock ? HeaderEditor(entryId: widget.entryId, entryDate: widget.entryDate) : AddHeader(entryId: widget.entryId, entryDate: widget.entryDate);
   }
 }
 
 class HeaderEditor extends StatefulWidget {
   int entryId = 0;
-  HeaderEditor({super.key, required this.entryId});
+  DateTime entryDate;
+  HeaderEditor({super.key, required this.entryId, required this.entryDate});
 
   @override
   State<HeaderEditor> createState() => _HeaderEditorState();
@@ -110,7 +112,7 @@ class _HeaderEditorState extends State<HeaderEditor> {
                   deleteHeader().then((_){
                     setState(() {
                       Navigator.pop(context);
-                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>AddHeader(entryId: widget.entryId)));
+                      Navigator.push(context, MaterialPageRoute(builder: (BuildContext context)=>AddHeader(entryId: widget.entryId, entryDate: widget.entryDate)));
                     });
                   });
                 }, child: Row(
